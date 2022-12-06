@@ -1,51 +1,48 @@
-import Head from "next/head";
-import Image from "next/image";
 import { useState } from "react";
-import { isTemplateSpan } from "typescript";
-import styles from "../styles/Home.module.css";
+import { useTodosControll } from "../hooks/useTodosControll";
 
 //typescript 型宣言
-type Todo = {
+export type Todo = {
   name: string;
   done: boolean;
 };
 
 export default function Home() {
-  const [todos, setTodos] = useState<Todo[]>([
-    { name: "ごんざぶろう", done: false },
-    { name: "cat", done: true },
-  ]);
+  const { todos, addTodo, deleteTodo, checkTodo } = useTodosControll();
   const [todoText, setTodoText] = useState("");
 
-  const addTodo = () => {
-    if (todoText && todos.every((v) => v.name !== todoText)) {
-      setTodos([...todos, { name: todoText, done: false }]);
-    }
-  };
-
-  const deleteTodo = (todo: Todo) => {
-    setTodos(todos.filter((v) => v.name !== todo.name));
-  };
-
   return (
-    <div>
+    <div className="text-center my-12">
       <input
         className="outline"
         value={todoText}
         onChange={(event) => setTodoText(event.target.value)}
       ></input>
-      {/* <div>{todoText}</div> */}
-      <button onClick={addTodo}>追加</button>
-      {todos.map((todo) => (
-        <div className="text-center">
-          <div>
-            <p className="inline-block">{todo.name}：</p>
-            <p className="inline-block">{String(todo.done)}</p>
 
-            <button onClick={() => deleteTodo(todo)}>削除</button>
+      <button
+        onClick={() => addTodo(todoText)}
+        className="border bg-gray-300 mx-2"
+      >
+        追加
+      </button>
+      <div className="border-2 border-black mx-[20vw] max-w-[800px] my-8">
+        {/* <div className="border-2 border-black w-[80vw] max-w-[600px] mx-auto my-8"> */}
+        {todos.map((todo) => (
+          <div className="text-center">
+            <div>
+              <input
+                type="checkbox"
+                checked={todo.done}
+                onClick={() => checkTodo(todo.name)}
+              />
+              <p className="inline-block">{todo.name}：</p>
+              <p className="inline-block">{String(todo.done)}</p>
+
+              <button onClick={() => deleteTodo(todo)}>削除</button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
